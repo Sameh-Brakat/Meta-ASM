@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "518913404786",
+    "project_id": "meta-asm",
+    "storage_bucket": "meta-asm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:518913404786:android:3bf11314fcb025c495b7eb",
+        "android_client_info": {
+          "package_name": "com.example.social_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD40Pcb84OJTacrY9qxLLR9iWFuOV9urGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
