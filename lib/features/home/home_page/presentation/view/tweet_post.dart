@@ -48,20 +48,22 @@ class _TweetNewPostState extends State<TweetNewPost> {
               ),
               actions: [
                 InkWell(
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
                   onTap: () {
                     if (cubit.tweetImage == null &&
                         formKey.currentState!.validate()) {
                       cubit.createTweet(
                           tweetText: tweetTextController.text,
-                          tweetDate:
-                              DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                          tweetDate: DateTime.now().toString(),
                           tweetTime:
                               DateFormat('hh:mm a').format(DateTime.now()));
                     } else if (cubit.tweetImage != null) {
                       cubit.createTweetWithImage(
                           tweetText: tweetTextController.text,
-                          tweetDate:
-                              DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                          tweetDate: DateTime.now().toString(),
                           tweetTime:
                               DateFormat('hh:mm a').format(DateTime.now()));
                     }

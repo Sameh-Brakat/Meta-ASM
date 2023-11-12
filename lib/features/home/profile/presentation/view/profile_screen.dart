@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:social_app/core/components/tweet_item.dart';
+import 'package:social_app/core/models/react_tweet_model.dart';
 import 'package:social_app/core/models/tweet_model.dart';
 import 'package:social_app/core/styles/icon_broken.dart';
+import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_cubit.dart';
+import 'package:social_app/features/home/posts/presentation/controller/tweets_screen_cubit.dart';
 import 'package:social_app/features/home/profile/presentation/view/edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -31,16 +34,24 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: [
           Stack(
             children: [
-              Container(
+              SizedBox(
                 height: MediaQuery.sizeOf(context).height * 0.24,
                 width: double.infinity,
               ),
-              Image.asset(
-                'assets/images/photo.jpg',
-                height: MediaQuery.sizeOf(context).height * 0.17,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+              if (HomeCubit.userModel!.cover != null)
+                Image.network(
+                  HomeCubit.userModel!.cover!,
+                  height: MediaQuery.sizeOf(context).height * 0.17,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              if (HomeCubit.userModel!.cover == null)
+                Image.asset(
+                  'assets/images/photo.jpg',
+                  height: MediaQuery.sizeOf(context).height * 0.17,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               AppBar(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
@@ -72,14 +83,24 @@ class _ProfileScreenState extends State<ProfileScreen>
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                      border: Border.all(width: 4, color: Colors.white),
-                      borderRadius: BorderRadius.circular(50),
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          'assets/images/profile.jpg',
-                        ),
-                        fit: BoxFit.cover,
-                      )),
+                    border: Border.all(width: 4, color: Colors.white),
+                    borderRadius: BorderRadius.circular(50),
+                    image: HomeCubit.userModel!.image != null
+                        ? DecorationImage(
+                            opacity: 0.5,
+                            colorFilter: const ColorFilter.mode(
+                                Colors.black, BlendMode.colorDodge),
+                            image: NetworkImage(HomeCubit.userModel!.image!),
+                            fit: BoxFit.cover,
+                          )
+                        : const DecorationImage(
+                            opacity: 0.5,
+                            colorFilter: ColorFilter.mode(
+                                Colors.black, BlendMode.colorDodge),
+                            image: AssetImage('assets/images/profile.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ),
               Positioned(
@@ -293,7 +314,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: ListView.separated(
         itemBuilder: (context, index) {
-          // final post = PostData.posts[index];
+          LikeTweetModel reactTweetModel = TweetsScreenCubit.get(context)
+              .getReactTweet(
+                  tweetId: tweetList[index].tweetId!,
+                  userId: tweetList[index].userId!) as LikeTweetModel;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: TweetItem(

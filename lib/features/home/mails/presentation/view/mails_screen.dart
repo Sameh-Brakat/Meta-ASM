@@ -1,32 +1,119 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:social_app/core/styles/icon_broken.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/core/constants.dart';
+import 'package:social_app/core/models/chat_model.dart';
+import 'package:social_app/core/models/user_model.dart';
+import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_cubit.dart';
+import 'package:social_app/features/home/mails/presentation/controller/mails_screen_cubit.dart';
+import 'package:social_app/features/home/mails/presentation/controller/mails_screen_states.dart';
+import 'package:social_app/features/home/mails/presentation/view/chat_screen.dart';
 
 class MailsScreen extends StatelessWidget {
-  const MailsScreen({super.key});
+  MailsScreen({super.key});
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemBuilder: (context, index) {
-        return MessageItem();
-      },
-      separatorBuilder: (context, index) => const SizedBox(
-        height: 10,
+    return BlocProvider(
+      create: (context) => MailsScreenCubit(),
+      child: BlocConsumer<MailsScreenCubit, MailsScreenStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          return StreamBuilder<QuerySnapshot>(
+            stream: users.snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                List<UserModel> users = [];
+                for (var i = 0; i < snapshot.data!.docs.length; i++) {
+                  if (snapshot.data!.docs[i].id == uId) {
+                    continue;
+                  }
+                  users.add(UserModel.fromJson(snapshot.data!.docs[i]));
+                }
+
+                return ListView.separated(
+                  itemBuilder: (context, index) {
+                    CollectionReference lastSecondUserMessage =
+                        FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(uId)
+                            .collection('userChats')
+                            .doc(users[index].uId)
+                            .collection('userMessages');
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                secondUserId: users[index].uId!,
+                              ),
+                            ));
+                      },
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: lastSecondUserMessage
+                            .orderBy('date', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List<ChatModel> messageList = [];
+                            for (var i = 0;
+                                i < snapshot.data!.docs.length;
+                                i++) {
+                              messageList.add(
+                                  ChatModel.fromJson(snapshot.data!.docs[i]));
+                            }
+                            return MessageItem(
+                              user: users[index],
+                              lastmessage: messageList.isEmpty
+                                  ? ''
+                                  : messageList[0].text,
+                            );
+                          } else {
+                            return MessageItem(
+                              user: users[index],
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 10,
+                  ),
+                  itemCount: users.length,
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
+          );
+        },
       ),
-      itemCount: 3,
     );
   }
 
-  Widget MessageItem() {
+  Widget MessageItem({required UserModel user, String? lastmessage}) {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundImage: AssetImage('assets/images/profile.jpg'),
-          ),
+          if (user.image != null)
+            CircleAvatar(
+              radius: 30,
+              backgroundImage: NetworkImage(
+                user.image!,
+              ),
+            ),
+          if (user.image == null)
+            const CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage('assets/images/profile.jpg')),
           const SizedBox(
             width: 15,
           ),
@@ -36,25 +123,21 @@ class MailsScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const SizedBox(
-                      width: 110,
-                      child: Text(
-                        'Sameh Barakat',
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            overflow: TextOverflow.ellipsis),
-                      ),
+                    Text(
+                      user.name!,
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          overflow: TextOverflow.ellipsis),
                     ),
                     const Icon(
                       Icons.verified,
                       color: Colors.blue,
                       size: 15,
                     ),
-                    SizedBox(
-                      width: 70,
+                    Expanded(
                       child: Text(
-                        '@samehelsayedbarakat',
+                        user.email!,
                         style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -77,10 +160,10 @@ class MailsScreen extends StatelessWidget {
                 const SizedBox(
                   height: 3,
                 ),
-                const Text(
-                  'السلام عليكم ورحمة الله وبركاته',
+                Text(
+                  '$lastmessage',
                   maxLines: 2,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey,

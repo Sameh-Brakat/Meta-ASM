@@ -6,6 +6,7 @@ import 'package:social_app/core/styles/icon_broken.dart';
 import 'package:social_app/features/authentication/login/presentation/view/login_screen.dart';
 import 'package:social_app/features/authentication/register/presentation/controller/create_account_cubit.dart';
 import 'package:social_app/features/authentication/register/presentation/controller/create_account_states.dart';
+import 'package:social_app/features/home/home_page/presentation/view/home_screen.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});
@@ -32,7 +33,17 @@ class _CreateAccountState extends State<CreateAccount> {
     return BlocProvider(
       create: (context) => RegisterCubit(),
       child: BlocConsumer<RegisterCubit, RegisterStates>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is CreateUserSuccessState) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+              (route) => false,
+            );
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
@@ -177,7 +188,7 @@ class _CreateAccountState extends State<CreateAccount> {
                       if (nametexted == true &&
                           emailtexted == true &&
                           passwordtexted == true) {
-                        RegisterCubit().userRegister(
+                        RegisterCubit.get(context).userRegister(
                           context,
                           name: nameController.text,
                           email: emailController.text,

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:social_app/core/components/tweet_item.dart';
+import 'package:social_app/core/models/react_tweet_model.dart';
 import 'package:social_app/core/models/tweet_model.dart';
+import 'package:social_app/features/home/posts/presentation/controller/tweets_screen_cubit.dart';
 
 class BookMarksScreen extends StatefulWidget {
   const BookMarksScreen({super.key});
@@ -46,7 +48,10 @@ class _BookMarksScreenState extends State<BookMarksScreen> {
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: ListView.separated(
                 itemBuilder: (context, index) {
-                  // final post = PostData.posts[index];
+                  LikeTweetModel reactTweetModel =
+                      TweetsScreenCubit.get(context).getReactTweet(
+                          tweetId: tweetList[index].tweetId!,
+                          userId: tweetList[index].userId!) as LikeTweetModel;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TweetItem(

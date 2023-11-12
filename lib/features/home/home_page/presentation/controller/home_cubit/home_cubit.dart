@@ -4,11 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/core/components/search.dart';
 import 'package:social_app/core/constants.dart';
 import 'package:social_app/core/models/user_model.dart';
+import 'package:social_app/core/utils/cashe_helper.dart';
 import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_states.dart';
 import 'package:social_app/features/home/mails/presentation/view/mails_screen.dart';
-import 'package:social_app/features/home/notification/presentation/view/notification_screen.dart';
 import 'package:social_app/features/home/posts/presentation/view/tweets_screen.dart';
-import 'package:social_app/features/home/search/presentation/view/search_screen.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(HomeInitialState());
@@ -18,6 +17,7 @@ class HomeCubit extends Cubit<HomeStates> {
   static UserModel? userModel;
   getUser() {
     emit(GetUserLoadingState());
+    uId = CacheHelper.getData(key: 'uId');
     FirebaseFirestore.instance.collection('users').doc(uId).get().then((value) {
       userModel = UserModel.fromJson(value.data()!);
       emit(GetUserSuccessState());
@@ -36,9 +36,9 @@ class HomeCubit extends Cubit<HomeStates> {
 
   List<Widget> screens = [
     const TweetsScreen(),
-    const SearchScreen(),
-    const NotificationScreen(),
-    const MailsScreen(),
+    // const SearchScreen(),
+    // const NotificationScreen(),
+    MailsScreen(),
   ];
   List<Widget> title = [
     const CircleAvatar(

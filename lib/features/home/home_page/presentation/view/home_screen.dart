@@ -334,25 +334,27 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             body: cubit.screens[cubit.currentIndex],
-            floatingActionButton: FloatingActionButton(
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(50), // Define a custom shape
-              ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TweetNewPost(),
-                    ));
-              },
-              backgroundColor: Colors.blue,
-              child: const Icon(
-                Icons.add,
-                // size: 25,
-                color: Colors.white,
-              ),
-            ),
+            floatingActionButton: cubit.currentIndex == 0
+                ? FloatingActionButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(50), // Define a custom shape
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TweetNewPost(),
+                          ));
+                    },
+                    backgroundColor: Colors.blue,
+                    child: const Icon(
+                      Icons.add,
+                      // size: 25,
+                      color: Colors.white,
+                    ),
+                  )
+                : null,
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: cubit.currentIndex,
               onTap: (value) {
@@ -364,14 +366,14 @@ class HomeScreen extends StatelessWidget {
                   icon: Icon(IconBroken.Home),
                   label: '',
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(IconBroken.Search),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(IconBroken.Notification),
-                  label: '',
-                ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(IconBroken.Search),
+                //   label: '',
+                // ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(IconBroken.Notification),
+                //   label: '',
+                // ),
                 BottomNavigationBarItem(
                   icon: Icon(IconBroken.Message),
                   label: '',
@@ -438,16 +440,16 @@ class HomeScreen extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                            Row(
                               children: [
                                 Text(
-                                  'Sameh Barakat',
-                                  style: TextStyle(
+                                  HomeCubit.userModel!.name!,
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w900,
                                       overflow: TextOverflow.ellipsis),
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.verified,
                                   color: Colors.blue,
                                   size: 15,
@@ -455,7 +457,7 @@ class HomeScreen extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              'samehelsayedbarakat',
+                              HomeCubit.userModel!.email!,
                               style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],

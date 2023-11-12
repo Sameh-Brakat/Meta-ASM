@@ -5,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/core/components/toast.dart';
 import 'package:social_app/core/models/user_model.dart';
 import 'package:social_app/core/utils/cashe_helper.dart';
-import 'package:social_app/features/authentication/login/presentation/view/login_screen.dart';
 import 'package:social_app/features/authentication/register/presentation/controller/create_account_states.dart';
-import 'package:social_app/features/home/home_page/presentation/view/home_screen.dart';
 
 class RegisterCubit extends Cubit<RegisterStates> {
   RegisterCubit() : super(InitialRegisterState());
@@ -32,15 +30,8 @@ class RegisterCubit extends Cubit<RegisterStates> {
         createUserAccount(
             uId: value.user!.uid, name: name, email: email, date: date);
 
-        CacheHelper.saveData(key: 'uId', value: value.user!.uid).then((value) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomeScreen(),
-            ),
-            (route) => false,
-          );
-        });
+        CacheHelper.saveData(key: 'uId', value: value.user!.uid)
+            .then((value) {});
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

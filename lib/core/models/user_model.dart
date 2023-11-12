@@ -8,6 +8,7 @@ class UserModel {
   String? bio;
   int? following;
   int? followers;
+
   UserModel({
     this.uId,
     this.name,
@@ -19,7 +20,7 @@ class UserModel {
     this.following,
     this.followers,
   });
-  UserModel.fromJson(Map<String, dynamic> json) {
+  UserModel.fromJson(json) {
     uId = json['uId'];
     name = json['name'];
     email = json['email'];
@@ -30,8 +31,8 @@ class UserModel {
     following = json['following'];
     followers = json['followers'];
   }
-  Map<String, dynamic>? toJson() {
-    return {
+  dynamic toJson() {
+    final data = {
       'uId': uId,
       'name': name,
       'email': email,
@@ -42,5 +43,7 @@ class UserModel {
       'following': following,
       'followers': followers,
     };
+
+    return data;
   }
 }

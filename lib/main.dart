@@ -4,7 +4,6 @@ import 'package:social_app/core/utils/bloc_observe.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:social_app/core/utils/cashe_helper.dart';
 import 'package:social_app/features/authentication/login/presentation/view/login_screen.dart';
-import 'package:social_app/features/authentication/register/presentation/view/create_account.dart';
 import 'package:social_app/features/home/home_page/presentation/view/home_screen.dart';
 import 'package:social_app/firebase_options.dart';
 
