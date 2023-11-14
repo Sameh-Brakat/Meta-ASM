@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 Widget TextFieldItem(title,
-    {required controller, void Function(String)? onChanged}) {
+    {required controller,
+    void Function(String)? onChanged,
+    Function(String)? onSubmit}) {
   return Padding(
     padding: const EdgeInsets.all(15).copyWith(bottom: 30, top: 0),
     child: Column(
@@ -18,6 +20,7 @@ Widget TextFieldItem(title,
         TextFormField(
           controller: controller,
           onChanged: onChanged,
+          onFieldSubmitted: onSubmit,
           style: TextStyle(
             fontSize: 19,
             color: Colors.grey[700],

@@ -87,103 +87,149 @@ class EditProfile extends StatelessWidget {
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0)),
-                        child: Container(
-                          height: MediaQuery.sizeOf(context).height * 0.17,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            image: cubit.coverImage != null
-                                ? DecorationImage(
-                                    opacity: 0.5,
-                                    colorFilter: const ColorFilter.mode(
-                                        Colors.black, BlendMode.colorDodge),
-                                    image: FileImage(
-                                      cubit.coverImage!,
-                                    ),
-                                    fit: BoxFit.cover,
-                                  )
-                                : HomeCubit.userModel!.cover != null
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: MediaQuery.sizeOf(context).height * 0.17,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                image: cubit.coverImage != null
                                     ? DecorationImage(
                                         opacity: 0.5,
                                         colorFilter: const ColorFilter.mode(
                                             Colors.black, BlendMode.colorDodge),
-                                        image: NetworkImage(
-                                            HomeCubit.userModel!.cover!),
+                                        image: FileImage(
+                                          cubit.coverImage!,
+                                        ),
                                         fit: BoxFit.cover,
                                       )
-                                    : const DecorationImage(
-                                        opacity: 0.5,
-                                        colorFilter: ColorFilter.mode(
-                                            Colors.black, BlendMode.colorDodge),
-                                        image: AssetImage(
-                                            'assets/images/photo.jpg'),
-                                        fit: BoxFit.cover,
-                                      ),
-                          ),
-                          child: Center(
-                            child: IconButton(
-                              icon: const Icon(
-                                IconBroken.Camera,
-                                color: Colors.white,
-                                size: 40,
+                                    : HomeCubit.userModel!.cover != null
+                                        ? DecorationImage(
+                                            opacity: 0.5,
+                                            colorFilter: const ColorFilter.mode(
+                                                Colors.black,
+                                                BlendMode.colorDodge),
+                                            image: NetworkImage(
+                                                HomeCubit.userModel!.cover!),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const DecorationImage(
+                                            opacity: 0.5,
+                                            colorFilter: ColorFilter.mode(
+                                                Colors.black,
+                                                BlendMode.colorDodge),
+                                            image: AssetImage(
+                                                'assets/images/photo.jpg'),
+                                            fit: BoxFit.cover,
+                                          ),
                               ),
-                              onPressed: () {
-                                cubit.chooseCoverImage();
-                              },
+                              child: Center(
+                                child: IconButton(
+                                  icon: const Icon(
+                                    IconBroken.Camera,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                  onPressed: () {
+                                    cubit.chooseCoverImage();
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
+                            if (cubit.coverImage != null)
+                              Positioned(
+                                  right: 10,
+                                  bottom: 10,
+                                  child: InkWell(
+                                    onTap: () {
+                                      cubit.updateCoverImage();
+                                    },
+                                    child: const CircleAvatar(
+                                      backgroundColor: Colors.blue,
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ))
+                          ],
                         ),
                       ),
                       Positioned(
                         bottom: 0,
-                        child: Container(
-                            margin: const EdgeInsets.all(15),
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 4, color: Colors.white),
-                              borderRadius: BorderRadius.circular(50),
-                              image: cubit.profileImage != null
-                                  ? DecorationImage(
-                                      opacity: 0.5,
-                                      colorFilter: const ColorFilter.mode(
-                                          Colors.black, BlendMode.colorDodge),
-                                      image: FileImage(
-                                        cubit.profileImage!,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : HomeCubit.userModel!.image != null
+                        child: Stack(
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.all(15),
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 4, color: Colors.white),
+                                  borderRadius: BorderRadius.circular(50),
+                                  image: cubit.profileImage != null
                                       ? DecorationImage(
                                           opacity: 0.5,
                                           colorFilter: const ColorFilter.mode(
                                               Colors.black,
                                               BlendMode.colorDodge),
-                                          image: NetworkImage(
-                                              HomeCubit.userModel!.image!),
+                                          image: FileImage(
+                                            cubit.profileImage!,
+                                          ),
                                           fit: BoxFit.cover,
                                         )
-                                      : const DecorationImage(
-                                          opacity: 0.5,
-                                          colorFilter: ColorFilter.mode(
-                                              Colors.black,
-                                              BlendMode.colorDodge),
-                                          image: AssetImage(
-                                              'assets/images/profile.jpg'),
-                                          fit: BoxFit.cover,
-                                        ),
-                            ),
-                            child: Center(
-                              child: IconButton(
-                                  onPressed: () {
-                                    ProfileCubit.get(context)
-                                        .chooseProfileImage();
-                                  },
-                                  icon: const Icon(
-                                    IconBroken.Camera,
-                                    color: Colors.white,
-                                    size: 40,
-                                  )),
-                            )),
+                                      : HomeCubit.userModel!.image != null
+                                          ? DecorationImage(
+                                              opacity: 0.5,
+                                              colorFilter:
+                                                  const ColorFilter.mode(
+                                                      Colors.black,
+                                                      BlendMode.colorDodge),
+                                              image: NetworkImage(
+                                                  HomeCubit.userModel!.image!),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : const DecorationImage(
+                                              opacity: 0.5,
+                                              colorFilter: ColorFilter.mode(
+                                                  Colors.black,
+                                                  BlendMode.colorDodge),
+                                              image: AssetImage(
+                                                  'assets/images/profile.jpg'),
+                                              fit: BoxFit.cover,
+                                            ),
+                                ),
+                                child: Center(
+                                  child: IconButton(
+                                      onPressed: () {
+                                        ProfileCubit.get(context)
+                                            .chooseProfileImage();
+                                      },
+                                      icon: const Icon(
+                                        IconBroken.Camera,
+                                        color: Colors.white,
+                                        size: 40,
+                                      )),
+                                )),
+                            if (cubit.profileImage != null)
+                              Positioned(
+                                  right: 15,
+                                  bottom: 15,
+                                  child: InkWell(
+                                    onTap: () {
+                                      cubit.updateProfileImage();
+                                    },
+                                    child: const CircleAvatar(
+                                      radius: 17,
+                                      backgroundColor: Colors.blue,
+                                      child: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ))
+                          ],
+                        ),
                       ),
                     ],
                   ),

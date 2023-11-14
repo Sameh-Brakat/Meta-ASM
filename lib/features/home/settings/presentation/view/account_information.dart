@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:social_app/core/components/appbar.dart';
+import 'package:social_app/core/utils/cashe_helper.dart';
 import 'package:social_app/features/authentication/login/presentation/view/login_screen.dart';
 import 'package:social_app/features/home/settings/presentation/view/change_email.dart';
 import 'package:social_app/features/home/settings/presentation/view/change_phone.dart';
@@ -44,12 +45,14 @@ class AccountInformation extends StatelessWidget {
               padding: const EdgeInsets.all(15),
               child: InkWell(
                 onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ),
-                      (route) => false);
+                  CacheHelper.removeData(key: 'uId').then((value) {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                        (route) => false);
+                  });
                 },
                 child: Text(
                   'Log out',

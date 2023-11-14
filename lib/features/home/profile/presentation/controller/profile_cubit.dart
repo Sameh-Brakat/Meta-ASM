@@ -83,26 +83,29 @@ class ProfileCubit extends Cubit<ProfileStates> {
   void updateUserProfile(
     context, {
     String? name,
-    String? bio,
     String? email,
+    String? bio,
+    String? date,
     // String? location,
     // required String website,
-    // String? cover,
+    String? cover,
+    String? image,
   }) {
     UserModel model = UserModel(
       uId: HomeCubit.userModel!.uId,
-      name: name,
-      bio: bio,
-      email: email,
-      // cover: cover ?? HomeCubit.userModel!.cover,
-      // image: image ?? HomeCubit.userModel!.image,
+      name: name ?? HomeCubit.userModel!.name,
+      email: email ?? HomeCubit.userModel!.email,
+      date: date ?? HomeCubit.userModel!.date,
+      cover: cover ?? HomeCubit.userModel!.cover,
+      image: image ?? HomeCubit.userModel!.image,
+      bio: bio ?? HomeCubit.userModel!.bio,
     );
-    if (profileImage != null) {
-      updateProfileImage();
-    }
-    if (coverImage != null) {
-      updateCoverImage();
-    }
+    // if (profileImage != null) {
+    //   updateProfileImage();
+    // }
+    // if (coverImage != null) {
+    //   updateCoverImage();
+    // }
 
     FirebaseFirestore.instance
         .collection('users')

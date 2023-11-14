@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:social_app/core/components/custom_bottom_sheet.dart';
 import 'package:social_app/core/components/tweet_item.dart';
 import 'package:social_app/core/constants.dart';
 import 'package:social_app/core/models/react_tweet_model.dart';
@@ -68,7 +69,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ))),
                 actions: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showCustomBottomSheet(context);
+                      },
                       icon: CircleAvatar(
                           backgroundColor: Colors.black.withOpacity(0.7),
                           child: const Icon(
