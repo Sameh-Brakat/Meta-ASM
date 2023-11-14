@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/core/constants.dart';
+import 'package:social_app/core/models/user_model.dart';
 import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_cubit.dart';
 import 'package:social_app/features/home/profile/presentation/controller/profile_states.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -77,6 +77,42 @@ class ProfileCubit extends Cubit<ProfileStates> {
         print(e);
         emit(UpdateImageErrorState());
       });
+    });
+  }
+
+  void updateUserProfile(
+    context, {
+    String? name,
+    String? bio,
+    String? email,
+    // String? location,
+    // required String website,
+    // String? cover,
+  }) {
+    UserModel model = UserModel(
+      uId: HomeCubit.userModel!.uId,
+      name: name,
+      bio: bio,
+      email: email,
+      // cover: cover ?? HomeCubit.userModel!.cover,
+      // image: image ?? HomeCubit.userModel!.image,
+    );
+    if (profileImage != null) {
+      updateProfileImage();
+    }
+    if (coverImage != null) {
+      updateCoverImage();
+    }
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(HomeCubit.userModel?.uId)
+        .update(model.toJson()!)
+        .then((value) {
+      HomeCubit.get(context).getUser();
+    }).catchError((e) {
+      print(e);
+      emit(UpdateUserProfileErrorState());
     });
   }
 }

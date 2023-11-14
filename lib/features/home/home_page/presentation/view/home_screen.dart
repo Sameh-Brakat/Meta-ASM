@@ -4,6 +4,7 @@ import 'package:social_app/core/models/user_model.dart';
 import 'package:social_app/core/styles/icon_broken.dart';
 import 'package:social_app/core/utils/cashe_helper.dart';
 import 'package:social_app/features/authentication/login/presentation/view/login_screen.dart';
+import 'package:social_app/features/authentication/register/presentation/view/create_account.dart';
 import 'package:social_app/features/home/drawer/presentation/view/blue_screen.dart';
 import 'package:social_app/features/home/drawer/presentation/view/bookmarks_screen.dart';
 import 'package:social_app/features/home/drawer/presentation/view/list_screen.dart';
@@ -41,11 +42,18 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         Scaffold.of(context).openDrawer();
                       },
-                      child: const CircleAvatar(
-                          radius: 5,
-                          backgroundImage: AssetImage(
-                            'assets/images/profile.jpg',
-                          )),
+                      child: HomeCubit.userModel?.image != null
+                          ? CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                HomeCubit.userModel!.image!,
+                              ),
+                            )
+                          : const CircleAvatar(
+                              radius: 20,
+                              backgroundImage:
+                                  AssetImage('assets/images/profile.jpg'),
+                            ),
                     ),
                   );
                 },
@@ -129,11 +137,18 @@ class HomeScreen extends StatelessWidget {
                                             const ProfileScreen(),
                                       ));
                                 },
-                                child: const CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage:
-                                      AssetImage('assets/images/profile.jpg'),
-                                ),
+                                child: HomeCubit.userModel?.image != null
+                                    ? CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: NetworkImage(
+                                          HomeCubit.userModel!.image!,
+                                        ),
+                                      )
+                                    : const CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: AssetImage(
+                                            'assets/images/profile.jpg'),
+                                      ),
                               ),
                               InkWell(
                                 splashColor: Colors.transparent,
@@ -196,51 +211,51 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(
                             height: 15,
                           ),
-                          Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    "${user?.following} ",
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                  Text(
-                                    'Following',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "${user?.followers} ",
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                  Text(
-                                    'Followers',
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey[600],
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Row(
+                          //       children: [
+                          //         Text(
+                          //           "${user?.following} ",
+                          //           style: const TextStyle(
+                          //               fontSize: 13,
+                          //               fontWeight: FontWeight.bold,
+                          //               overflow: TextOverflow.ellipsis),
+                          //         ),
+                          //         Text(
+                          //           'Following',
+                          //           style: TextStyle(
+                          //               fontSize: 13,
+                          //               color: Colors.grey[600],
+                          //               fontWeight: FontWeight.bold,
+                          //               overflow: TextOverflow.ellipsis),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     const SizedBox(
+                          //       width: 10,
+                          //     ),
+                          //     Row(
+                          //       children: [
+                          //         Text(
+                          //           "${user?.followers} ",
+                          //           style: const TextStyle(
+                          //               fontSize: 13,
+                          //               fontWeight: FontWeight.bold,
+                          //               overflow: TextOverflow.ellipsis),
+                          //         ),
+                          //         Text(
+                          //           'Followers',
+                          //           style: TextStyle(
+                          //               fontSize: 13,
+                          //               color: Colors.grey[600],
+                          //               fontWeight: FontWeight.bold,
+                          //               overflow: TextOverflow.ellipsis),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),
@@ -429,11 +444,19 @@ class HomeScreen extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const CircleAvatar(
-                          radius: 20,
-                          backgroundImage:
-                              AssetImage('assets/images/profile.jpg'),
-                        ),
+                        if (HomeCubit.userModel!.image != null)
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                              HomeCubit.userModel!.image!,
+                            ),
+                          ),
+                        if (HomeCubit.userModel!.image == null)
+                          const CircleAvatar(
+                            radius: 20,
+                            backgroundImage:
+                                AssetImage('assets/images/profile.jpg'),
+                          ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -478,12 +501,11 @@ class HomeScreen extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ),
-                            (route) => false);
+                              builder: (context) => const CreateAccount(),
+                            ));
                       },
                       child: Container(
                         height: 50,

@@ -9,3 +9,5 @@ class ChooseImageErrorState extends ProfileStates {}
 class UpdateImageSuccessState extends ProfileStates {}
 
 class UpdateImageErrorState extends ProfileStates {}
+
+class UpdateUserProfileErrorState extends ProfileStates {}

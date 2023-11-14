@@ -142,21 +142,42 @@ class _TweetsScreenState extends State<TweetsScreen>
                           padding: const EdgeInsets.only(top: 10, bottom: 10),
                           child: ListView.separated(
                             itemBuilder: (context, index) {
-                              LikeTweetModel reactTweetModel =
-                                  TweetsScreenCubit.get(context).getReactTweet(
-                                          tweetId: tweetList[index].tweetId!,
-                                          userId: tweetList[index].userId!)
-                                      as LikeTweetModel;
-                              // final post =
-                              //     PostData.posts[PostData.posts.length - index - 1];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: TweetItem(
-                                  context: context,
-                                  tweet: tweetList[index],
-                                  // reactTweetModel: reactTweetModel,
-                                ),
+                              return FutureBuilder(
+                                future: snapshot.data!.docs[index].reference
+                                    .collection('reacts')
+                                    .doc(uId)
+                                    .get(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Container();
+                                  } else {
+                                    bool likeValue = false;
+                                    if (snapshot.hasData &&
+                                        snapshot.data!.exists) {
+                                      final data = snapshot.data!.data() as Map<
+                                          String,
+                                          dynamic>; // Cast to the expected type
+                                      if (data['like'] != null) {
+                                        likeValue = data['like']
+                                            as bool; // Cast to bool if it's of that type
+                                      }
+                                    }
+                                    // print(likeValue);
+
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: TweetItem(
+                                        context: context,
+                                        tweet: tweetList[index],
+                                        likeValue:
+                                            likeValue, // Pass the likeValue to the TweetItem
+                                      ),
+                                    );
+                                  }
+                                },
                               );
                             },
                             separatorBuilder: (context, index) => Container(
@@ -168,6 +189,36 @@ class _TweetsScreenState extends State<TweetsScreen>
                             itemCount: tweetList.length,
                           ),
                         ),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        //   child: ListView.separated(
+                        //     itemBuilder: (context, index) {
+                        //       LikeTweetModel reactTweetModel =
+                        //           TweetsScreenCubit.get(context).getReactTweet(
+                        //                   tweetId: tweetList[index].tweetId!,
+                        //                   userId: tweetList[index].userId!)
+                        //               as LikeTweetModel;
+                        //       // final post =
+                        //       //     PostData.posts[PostData.posts.length - index - 1];
+                        //       return Padding(
+                        //         padding:
+                        //             const EdgeInsets.symmetric(horizontal: 20),
+                        //         child: TweetItem(
+                        //           context: context,
+                        //           tweet: tweetList[index],
+                        //           // reactTweetModel: reactTweetModel,
+                        //         ),
+                        //       );
+                        //     },
+                        //     separatorBuilder: (context, index) => Container(
+                        //       margin: const EdgeInsets.symmetric(vertical: 15),
+                        //       width: double.infinity,
+                        //       height: 1,
+                        //       color: Colors.grey[300],
+                        //     ),
+                        //     itemCount: tweetList.length,
+                        //   ),
+                        // ),
                       ],
                     );
                   }

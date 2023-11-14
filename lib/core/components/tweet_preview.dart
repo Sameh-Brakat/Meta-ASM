@@ -398,7 +398,8 @@ class TweetPreview extends StatelessWidget {
                                                   backgroundImage: NetworkImage(
                                                     snapshotComment
                                                         .data!.docs[index]
-                                                        .get('userId'),
+                                                        .get(
+                                                            'userProfileImage'),
                                                   ),
                                                 ),
                                               if (tweet.profileImage == null)
@@ -463,14 +464,14 @@ class TweetPreview extends StatelessWidget {
                                           const SizedBox(
                                             height: 5,
                                           ),
-                                          if (tweet.tweetImage != null)
-                                            Image.network(
-                                              "${tweet.tweetImage}",
-                                              fit: BoxFit.contain,
-                                            ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
+                                          // if (tweet.tweetImage != null)
+                                          //   Image.network(
+                                          //     "${tweet.tweetImage}",
+                                          //     fit: BoxFit.contain,
+                                          //   ),
+                                          // const SizedBox(
+                                          //   height: 5,
+                                          // ),
                                           // Padding(
                                           //   padding: const EdgeInsets.symmetric(
                                           //       horizontal: 10),
@@ -635,8 +636,8 @@ class TweetPreview extends StatelessWidget {
                                       );
                                     },
                                     separatorBuilder: (context, index) =>
-                                        const SizedBox(
-                                          height: 20,
+                                        Divider(
+                                          color: Colors.grey[100],
                                         ),
                                     itemCount:
                                         snapshotComment.data!.docs.length);
@@ -687,12 +688,39 @@ class TweetPreview extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(
-                        IconBroken.Camera,
+                        IconBroken.Send,
                         color: Colors.blue,
                         size: 27,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        if (commentController.text.isNotEmpty) {
+                          CommentModel commentModel = CommentModel(
+                              comment: commentController.text,
+                              userName: HomeCubit.userModel!.name,
+                              userEmail: HomeCubit.userModel!.email,
+                              userId: uId,
+                              dateComment: DateTime.now().toString());
+                          FirebaseFirestore.instance
+                              .collection('tweets')
+                              .doc(tweet.tweetId)
+                              .collection('comments')
+                              .add(commentModel.toMap()!)
+                              .then((value) {
+                            commentModel.commentId = value.id;
+                            value.update({'commentId': value.id});
+                            commentController.clear();
+                          });
+                        }
+                      },
                     ),
+                    // IconButton(
+                    //   icon: const Icon(
+                    //     IconBroken.Camera,
+                    //     color: Colors.blue,
+                    //     size: 27,
+                    //   ),
+                    //   onPressed: () {},
+                    // ),
                     const SizedBox(
                       width: 10,
                     ),

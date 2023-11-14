@@ -9,17 +9,26 @@ import 'package:social_app/features/home/profile/presentation/view/profile_scree
 
 class EditProfile extends StatelessWidget {
   EditProfile({super.key});
-  var nameController = TextEditingController(text: 'Sameh Barakat');
-  var bioController = TextEditingController(text: 'Software Engineer');
+  var nameController = TextEditingController(text: HomeCubit.userModel!.name);
+  var bioController = TextEditingController(text: HomeCubit.userModel!.bio);
   var locationController = TextEditingController(text: 'Suez');
   var websiteController = TextEditingController(text: 'ASM.com');
-  var birthdateController = TextEditingController(text: 'January 25, 2003');
-  var pronounsController = TextEditingController(text: 'Sameh Barakat');
+  var birthdateController =
+      TextEditingController(text: HomeCubit.userModel!.date);
+  var emailController = TextEditingController(text: HomeCubit.userModel!.email);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProfileCubit(),
+    return MultiBlocProvider(
+      // create: (context) => ProfileCubit(),
+      providers: [
+        BlocProvider(
+          create: (context) => ProfileCubit(),
+        ),
+        BlocProvider(
+          create: (context) => HomeCubit(),
+        ),
+      ],
       child: BlocConsumer<ProfileCubit, ProfileStates>(
         listener: (context, state) {
           if (state is UpdateImageSuccessState) {
@@ -49,14 +58,10 @@ class EditProfile extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    if (cubit.profileImage != null &&
-                        cubit.coverImage != null) {
-                      cubit.updateProfileAndCoverImages();
-                    } else if (cubit.profileImage != null) {
-                      cubit.updateProfileImage();
-                    } else if (cubit.coverImage != null) {
-                      cubit.updateCoverImage();
-                    }
+                    cubit.updateUserProfile(context,
+                        name: nameController.text,
+                        email: emailController.text,
+                        bio: bioController.text);
                   },
                   child: const Text(
                     'Save',
@@ -183,11 +188,11 @@ class EditProfile extends StatelessWidget {
                     ],
                   ),
                   TextFieldItem('Name', controller: nameController),
+                  TextFieldItem('Email', controller: emailController),
                   TextFieldItem('Bio', controller: bioController),
+                  TextFieldItem("Birth date", controller: birthdateController),
                   TextFieldItem('Location', controller: locationController),
                   TextFieldItem('Website', controller: websiteController),
-                  TextFieldItem("Birth date", controller: birthdateController),
-                  TextFieldItem('Pronouns', controller: pronounsController),
                 ],
               ),
             ),
