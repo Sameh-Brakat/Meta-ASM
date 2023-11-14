@@ -664,22 +664,24 @@ class TweetPreview extends StatelessWidget {
                       child: TextFormField(
                         controller: commentController,
                         onFieldSubmitted: (value) {
-                          CommentModel commentModel = CommentModel(
-                              comment: value,
-                              userName: HomeCubit.userModel!.name,
-                              userEmail: HomeCubit.userModel!.email,
-                              userId: uId,
-                              dateComment: DateTime.now().toString());
-                          FirebaseFirestore.instance
-                              .collection('tweets')
-                              .doc(tweet.tweetId)
-                              .collection('comments')
-                              .add(commentModel.toMap()!)
-                              .then((value) {
-                            commentModel.commentId = value.id;
-                            value.update({'commentId': value.id});
-                            commentController.clear();
-                          });
+                          if (value.isNotEmpty) {
+                            CommentModel commentModel = CommentModel(
+                                comment: value,
+                                userName: HomeCubit.userModel!.name,
+                                userEmail: HomeCubit.userModel!.email,
+                                userId: uId,
+                                dateComment: DateTime.now().toString());
+                            FirebaseFirestore.instance
+                                .collection('tweets')
+                                .doc(tweet.tweetId)
+                                .collection('comments')
+                                .add(commentModel.toMap()!)
+                                .then((value) {
+                              commentModel.commentId = value.id;
+                              value.update({'commentId': value.id});
+                              commentController.clear();
+                            });
+                          }
                         },
                         decoration: const InputDecoration(
                             hintText: 'Tweet your reply',
