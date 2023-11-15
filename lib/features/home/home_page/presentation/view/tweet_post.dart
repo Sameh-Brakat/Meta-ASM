@@ -88,6 +88,8 @@ class _TweetNewPostState extends State<TweetNewPost> {
               key: formKey,
               child: Column(
                 children: [
+                  if (state is CreateTweetLoadingState)
+                    const LinearProgressIndicator(),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(20),

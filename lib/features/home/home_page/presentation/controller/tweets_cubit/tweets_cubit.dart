@@ -58,6 +58,7 @@ class TweetsCubit extends Cubit<TweetsStates> {
     required String tweetDate,
     required String tweetTime,
   }) {
+    emit(CreateTweetLoadingState());
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child('tweets/${Uri.file(tweetImage!.path).pathSegments.last}')

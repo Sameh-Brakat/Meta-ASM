@@ -37,22 +37,32 @@ class ProfileCubit extends Cubit<ProfileStates> {
     }
   }
 
-  updateProfileAndCoverImages() {
-    updateProfileImage();
-    updateCoverImage();
-  }
-
   updateProfileImage() {
+    emit(UpdateImageLoadingState());
     firebase_storage.FirebaseStorage.instance
         .ref('users/${Uri.file(profileImage!.path).pathSegments.last}')
         .putFile(profileImage!)
         .then((value) {
-      value.ref.getDownloadURL().then((value) {
+      value.ref.getDownloadURL().then((valueUrl) {
         FirebaseFirestore.instance
             .collection('users')
             .doc(uId)
-            .update({'image': value});
-        HomeCubit.userModel!.image = value;
+            .update({'image': valueUrl}).then((value) {
+          FirebaseFirestore.instance
+              .collection('tweets')
+              .where('userId', isEqualTo: uId)
+              .get()
+              .then((tweetValue) {
+            if (tweetValue.docs.isNotEmpty) {
+              tweetValue.docs.forEach((doc) {
+                doc.reference.update({'profileImage': valueUrl});
+              });
+            }
+          }).catchError((e) {
+            print(e);
+          });
+        });
+        HomeCubit.userModel!.image = valueUrl;
         emit(UpdateImageSuccessState());
       }).catchError((e) {
         print(e);
@@ -62,6 +72,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
   }
 
   updateCoverImage() {
+    emit(UpdateImageLoadingState());
     firebase_storage.FirebaseStorage.instance
         .ref('users/${Uri.file(coverImage!.path).pathSegments.last}')
         .putFile(coverImage!)
@@ -88,24 +99,16 @@ class ProfileCubit extends Cubit<ProfileStates> {
     String? date,
     // String? location,
     // required String website,
-    String? cover,
-    String? image,
   }) {
+    emit(UpdateUserProfileLoadingState());
+
     UserModel model = UserModel(
       uId: HomeCubit.userModel!.uId,
       name: name ?? HomeCubit.userModel!.name,
       email: email ?? HomeCubit.userModel!.email,
       date: date ?? HomeCubit.userModel!.date,
-      cover: cover ?? HomeCubit.userModel!.cover,
-      image: image ?? HomeCubit.userModel!.image,
       bio: bio ?? HomeCubit.userModel!.bio,
     );
-    // if (profileImage != null) {
-    //   updateProfileImage();
-    // }
-    // if (coverImage != null) {
-    //   updateCoverImage();
-    // }
 
     FirebaseFirestore.instance
         .collection('users')
@@ -113,6 +116,23 @@ class ProfileCubit extends Cubit<ProfileStates> {
         .update(model.toJson()!)
         .then((value) {
       HomeCubit.get(context).getUser();
+      FirebaseFirestore.instance
+          .collection('tweets')
+          .where('userId', isEqualTo: uId)
+          .get()
+          .then((tweetValue) {
+        if (tweetValue.docs.isNotEmpty) {
+          tweetValue.docs.forEach((doc) {
+            doc.reference.update({
+              'name': name ?? HomeCubit.userModel!.name,
+              'email': email ?? HomeCubit.userModel!.email,
+            });
+          });
+        }
+      }).catchError((e) {
+        print(e);
+      });
+      emit(UpdateUserProfileSuccessState());
     }).catchError((e) {
       print(e);
       emit(UpdateUserProfileErrorState());

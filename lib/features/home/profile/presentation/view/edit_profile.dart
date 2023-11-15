@@ -31,7 +31,8 @@ class EditProfile extends StatelessWidget {
       ],
       child: BlocConsumer<ProfileCubit, ProfileStates>(
         listener: (context, state) {
-          if (state is UpdateImageSuccessState) {
+          if (state is UpdateImageSuccessState ||
+              state is UpdateUserProfileSuccessState) {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
@@ -77,6 +78,9 @@ class EditProfile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (state is UpdateUserProfileLoadingState ||
+                      state is UpdateImageLoadingState)
+                    const LinearProgressIndicator(),
                   Stack(
                     children: [
                       SizedBox(

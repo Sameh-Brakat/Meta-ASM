@@ -7,6 +7,7 @@ import 'package:social_app/core/models/react_tweet_model.dart';
 import 'package:social_app/core/models/tweet_model.dart';
 import 'package:social_app/core/styles/icon_broken.dart';
 import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_cubit.dart';
+import 'package:social_app/features/home/home_page/presentation/view/home_screen.dart';
 import 'package:social_app/features/home/posts/presentation/controller/tweets_screen_cubit.dart';
 import 'package:social_app/features/home/profile/presentation/view/edit_profile.dart';
 
@@ -59,7 +60,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                 backgroundColor: Colors.transparent,
                 leading: IconButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ));
                     },
                     icon: CircleAvatar(
                         backgroundColor: Colors.black.withOpacity(0.7),

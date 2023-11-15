@@ -153,12 +153,17 @@ class _CreateAccountState extends State<CreateAccount> {
                               onTap: () {
                                 showDatePicker(
                                   context: context,
-                                  initialDate: DateTime.now(),
+                                  initialDate: DateTime.parse('2003-01-01'),
                                   firstDate: DateTime.parse('1950-01-01'),
-                                  lastDate: DateTime.now(),
+                                  lastDate: DateTime.parse(
+                                      '2005-01-01'), // what prob here
                                 ).then((value) {
-                                  dateController.text =
-                                      DateFormat.yMMMd().format(value!);
+                                  if (value != null) {
+                                    dateController.text =
+                                        DateFormat.yMMMd().format(value);
+                                  } else {
+                                    dateController.clear();
+                                  }
                                 });
                               },
                               controller: dateController,

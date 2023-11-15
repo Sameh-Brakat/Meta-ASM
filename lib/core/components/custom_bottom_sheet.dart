@@ -7,7 +7,7 @@ import 'package:social_app/features/home/home_page/presentation/controller/home_
 void showCustomBottomSheet(context) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true, // Makes the bottom sheet full screen
+    isScrollControlled: true,
     builder: (context) {
       return Container(
         decoration: const BoxDecoration(

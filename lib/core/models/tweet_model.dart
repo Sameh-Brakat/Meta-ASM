@@ -8,9 +8,6 @@ class TweetModel {
   String? tweetTime;
   String? tweetText;
   String? tweetImage;
-  // fix this
-  // List<Likes>? likes;
-  //
 
   TweetModel({
     this.tweetId,
@@ -22,9 +19,6 @@ class TweetModel {
     this.tweetTime,
     this.tweetText,
     this.tweetImage,
-    // fix this
-    // this.likes,
-    //
   });
 
   TweetModel.fromJson(json) {
@@ -37,15 +31,6 @@ class TweetModel {
     tweetTime = json['tweetTime'];
     tweetText = json['tweetText'];
     tweetImage = json['tweetImage'];
-
-    // fix this
-    // if (json['likes'] != null) {
-    //   likes = <Likes>[];
-    //   json['likes'].forEach((v) {
-    //     likes!.add(Likes.fromJson(v));
-    //   });
-    // }
-    //
   }
 
   Map<String, dynamic>? toMap() {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:getwidget/components/shimmer/gf_shimmer.dart';
 import 'package:social_app/core/components/tweet_preview.dart';
 import 'package:social_app/core/constants.dart';
 import 'package:social_app/core/models/react_tweet_model.dart';
@@ -21,17 +22,15 @@ Widget TweetItem({
       .collection('tweets')
       .doc(tweet.tweetId)
       .collection('comments');
+  CollectionReference bookmarksCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc(uId)
+      .collection('bookmarks');
+
   return StreamBuilder(
     stream: reactsTweet.snapshots(),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
-        // print(snapshot.data?.docs.any((element) =>
-        //     element['like'] ==
-        //     true)); // i want to get length user that have like == true
-        // ReactTweetModel reactTweetModel = TweetsScreenCubit.get(context)
-        //     .getReactTweet(
-        //         tweetId: tweet.tweetId!, userId: tweet.userId!);
-        // print(reactTweetModel);
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -134,6 +133,30 @@ Widget TweetItem({
                           Image.network(
                             "${tweet.tweetImage}",
                             fit: BoxFit.contain,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else {
+                                return GFShimmer(
+                                  mainColor: Colors.grey.withOpacity(0.4),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Column(
+                                      // crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 200,
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                           ),
                       ],
                     ),
@@ -141,45 +164,78 @@ Widget TweetItem({
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // const SizedBox(
-                      //   width: 50,
+                      StreamBuilder(
+                          stream: reactsTweet.snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              bool isliked = snapshot.data!.docs
+                                  .where((element) => element['userId'] == uId)
+                                  .isNotEmpty;
+
+                              return IconButton(
+                                icon: Row(
+                                  children: [
+                                    Icon(
+                                      IconBroken.Heart,
+                                      color:
+                                          likeValue ? Colors.red : Colors.black,
+                                    ),
+                                    Text(' ${snapshot.data?.docs.length}'),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  if (isliked) {
+                                    reactsTweet
+                                        .where('userId', isEqualTo: uId)
+                                        .get()
+                                        .then((doc) {
+                                      doc.docs.forEach((doc) {
+                                        doc.reference.delete();
+                                      });
+                                    }).catchError((e) {
+                                      print(e);
+                                    });
+                                  } else {
+                                    reactsTweet.add({'userId': uId});
+                                  }
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+
+                      // InkWell(
+                      //   onTap: () async {
+                      //     if (likeValue) {
+                      //       FirebaseFirestore.instance
+                      //           .collection('tweets')
+                      //           .doc(tweet.tweetId)
+                      //           .collection('reacts')
+                      //           .doc(uId)
+                      //           .set({'like': false});
+                      //       likeValue = false;
+                      //     } else {
+                      //       FirebaseFirestore.instance
+                      //           .collection('tweets')
+                      //           .doc(tweet.tweetId)
+                      //           .collection('reacts')
+                      //           .doc(uId)
+                      //           .set({'like': true});
+                      //       likeValue = true;
+                      //     }
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(
+                      //         IconBroken.Heart,
+                      //         color: likeValue ? Colors.red : Colors.black,
+                      //       ),
+                      //       Text(
+                      //           ' ${snapshot.data?.docs.where((element) => element['like'] == true).length}'),
+                      //     ],
+                      //   ),
                       // ),
-                      InkWell(
-                        onTap: () async {
-                          // print(await FirebaseFirestore.instance
-                          //     .collection('tweets')
-                          //     .doc(tweet.tweetId)
-                          //     .collection('likes')
-                          //     .doc(uId));
-                          if (likeValue) {
-                            FirebaseFirestore.instance
-                                .collection('tweets')
-                                .doc(tweet.tweetId)
-                                .collection('reacts')
-                                .doc(uId)
-                                .set({'like': false});
-                            likeValue = false;
-                          } else {
-                            FirebaseFirestore.instance
-                                .collection('tweets')
-                                .doc(tweet.tweetId)
-                                .collection('reacts')
-                                .doc(uId)
-                                .set({'like': true});
-                            likeValue = true;
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Icon(
-                              IconBroken.Heart,
-                              color: likeValue ? Colors.red : Colors.black,
-                            ),
-                            Text(
-                                ' ${snapshot.data?.docs.where((element) => element['like'] == true).length}'),
-                          ],
-                        ),
-                      ),
                       const SizedBox(
                         width: 30,
                       ),
@@ -205,7 +261,47 @@ Widget TweetItem({
                             },
                           );
                         },
-                      )
+                      ),
+                      const SizedBox(
+                        width: 30,
+                      ),
+                      StreamBuilder(
+                          stream: bookmarksCollection.snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              bool isBookmarked = snapshot.data!.docs
+                                  .where((element) =>
+                                      element['tweetId'] == tweet.tweetId)
+                                  .isNotEmpty;
+
+                              return IconButton(
+                                icon: Icon(
+                                  IconBroken.Bookmark,
+                                  color:
+                                      isBookmarked ? Colors.blue : Colors.black,
+                                ),
+                                onPressed: () {
+                                  if (isBookmarked) {
+                                    bookmarksCollection
+                                        .where('tweetId',
+                                            isEqualTo: tweet.tweetId)
+                                        .get()
+                                        .then((bookMarkValue) {
+                                      bookMarkValue.docs.forEach((doc) {
+                                        doc.reference.delete();
+                                      });
+                                    }).catchError((e) {
+                                      print(e);
+                                    });
+                                  } else {
+                                    bookmarksCollection.add(tweet.toMap()!);
+                                  }
+                                },
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
 
                       // Row(
                       //   children: [
