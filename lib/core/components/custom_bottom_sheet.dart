@@ -44,14 +44,14 @@ void showCustomBottomSheet(context) {
                   ),
                   Row(
                     children: [
-                      if (HomeCubit.userModel!.image != null)
+                      if (HomeCubit.userModel?.image != null)
                         CircleAvatar(
                           radius: 20,
                           backgroundImage: NetworkImage(
                             HomeCubit.userModel!.image!,
                           ),
                         ),
-                      if (HomeCubit.userModel!.image == null)
+                      if (HomeCubit.userModel?.image == null)
                         const CircleAvatar(
                           radius: 20,
                           backgroundImage:

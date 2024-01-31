@@ -67,23 +67,12 @@ class _BookMarksScreenState extends State<BookMarksScreen> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return ShimmerLoading(context);
                       } else {
-                        bool likeValue = false;
-                        if (snapshot.hasData && snapshot.data!.exists) {
-                          final data = snapshot.data!.data() as Map<String,
-                              dynamic>; // Cast to the expected type
-                          if (data['like'] != null) {
-                            likeValue = data['like']
-                                as bool; // Cast to bool if it's of that type
-                          }
-                        }
-
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: TweetItem(
                             context: context,
-                            tweet: bookMarksList[index],
-                            likeValue:
-                                likeValue, // Pass the likeValue to the TweetItem
+                            tweet: bookMarksList[
+                                index], // Pass the likeValue to the TweetItem
                           ),
                         );
                       }

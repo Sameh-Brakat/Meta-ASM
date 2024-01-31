@@ -10,7 +10,6 @@ import 'package:social_app/core/styles/icon_broken.dart';
 Widget TweetItem({
   required TweetModel tweet,
   LikeTweetModel? reactTweetModel,
-  likeValue,
   required context,
 }) {
   // print(reactTweetModel.like);
@@ -109,7 +108,6 @@ Widget TweetItem({
                           MaterialPageRoute(
                             builder: (context) => TweetPreview(
                               tweet: tweet,
-                              likeValue: likeValue,
                             ),
                           ));
                     },
@@ -178,7 +176,7 @@ Widget TweetItem({
                                     Icon(
                                       IconBroken.Heart,
                                       color:
-                                          likeValue ? Colors.red : Colors.black,
+                                          isliked ? Colors.red : Colors.black,
                                     ),
                                     Text(' ${snapshot.data?.docs.length}'),
                                   ],
@@ -205,37 +203,6 @@ Widget TweetItem({
                             }
                           }),
 
-                      // InkWell(
-                      //   onTap: () async {
-                      //     if (likeValue) {
-                      //       FirebaseFirestore.instance
-                      //           .collection('tweets')
-                      //           .doc(tweet.tweetId)
-                      //           .collection('reacts')
-                      //           .doc(uId)
-                      //           .set({'like': false});
-                      //       likeValue = false;
-                      //     } else {
-                      //       FirebaseFirestore.instance
-                      //           .collection('tweets')
-                      //           .doc(tweet.tweetId)
-                      //           .collection('reacts')
-                      //           .doc(uId)
-                      //           .set({'like': true});
-                      //       likeValue = true;
-                      //     }
-                      //   },
-                      //   child: Row(
-                      //     children: [
-                      //       Icon(
-                      //         IconBroken.Heart,
-                      //         color: likeValue ? Colors.red : Colors.black,
-                      //       ),
-                      //       Text(
-                      //           ' ${snapshot.data?.docs.where((element) => element['like'] == true).length}'),
-                      //     ],
-                      //   ),
-                      // ),
                       const SizedBox(
                         width: 30,
                       ),
@@ -255,7 +222,6 @@ Widget TweetItem({
                                   MaterialPageRoute(
                                     builder: (context) => TweetPreview(
                                       tweet: tweet,
-                                      likeValue: likeValue,
                                     ),
                                   ));
                             },

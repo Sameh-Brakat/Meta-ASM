@@ -8,9 +8,8 @@ import 'package:social_app/core/styles/icon_broken.dart';
 import 'package:social_app/features/home/home_page/presentation/controller/home_cubit/home_cubit.dart';
 
 class TweetPreview extends StatelessWidget {
-  TweetPreview({super.key, required this.tweet, required this.likeValue});
+  TweetPreview({super.key, required this.tweet});
   TweetModel tweet;
-  bool likeValue;
   var commentController = TextEditingController();
 
   @override
@@ -231,7 +230,7 @@ class TweetPreview extends StatelessWidget {
                                   Row(
                                     children: [
                                       Text(
-                                        ' ${snapshot.data?.docs.where((element) => element['like'] == true).length}',
+                                        ' ${snapshot.data?.docs.length}',
                                         style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
@@ -255,33 +254,46 @@ class TweetPreview extends StatelessWidget {
                                     ],
                                   ),
                                   const Spacer(),
-                                  IconButton(
-                                    icon: Icon(
-                                      IconBroken.Heart,
-                                      size: 30,
-                                      color:
-                                          likeValue ? Colors.red : Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      if (likeValue) {
-                                        FirebaseFirestore.instance
-                                            .collection('tweets')
-                                            .doc(tweet.tweetId)
-                                            .collection('reacts')
-                                            .doc(uId)
-                                            .set({'like': false});
-                                        likeValue = false;
-                                      } else {
-                                        FirebaseFirestore.instance
-                                            .collection('tweets')
-                                            .doc(tweet.tweetId)
-                                            .collection('reacts')
-                                            .doc(uId)
-                                            .set({'like': true});
-                                        likeValue = true;
-                                      }
-                                    },
-                                  ),
+                                  StreamBuilder(
+                                      stream: reactsTweet.snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          bool isliked = snapshot.data!.docs
+                                              .where((element) =>
+                                                  element['userId'] == uId)
+                                              .isNotEmpty;
+
+                                          return IconButton(
+                                            icon: Icon(
+                                              IconBroken.Heart,
+                                              size: 30,
+                                              color: isliked
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                            ),
+                                            onPressed: () {
+                                              if (isliked) {
+                                                reactsTweet
+                                                    .where('userId',
+                                                        isEqualTo: uId)
+                                                    .get()
+                                                    .then((doc) {
+                                                  doc.docs.forEach((doc) {
+                                                    doc.reference.delete();
+                                                  });
+                                                }).catchError((e) {
+                                                  print(e);
+                                                });
+                                              } else {
+                                                reactsTweet
+                                                    .add({'userId': uId});
+                                              }
+                                            },
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
                                 ],
                               ),
                               // const SizedBox(
@@ -402,7 +414,11 @@ class TweetPreview extends StatelessWidget {
                                                             'userProfileImage'),
                                                   ),
                                                 ),
-                                              if (tweet.profileImage == null)
+                                              if (snapshotComment
+                                                      .data!.docs[index]
+                                                      .get(
+                                                          'userProfileImage') ==
+                                                  null)
                                                 const CircleAvatar(
                                                     radius: 14,
                                                     backgroundImage: AssetImage(

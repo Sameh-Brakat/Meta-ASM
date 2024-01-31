@@ -56,12 +56,9 @@ class _TweetsScreenState extends State<TweetsScreen>
                     tweets.orderBy('tweetDate', descending: true).snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                        child:
-                            CircularProgressIndicator()); // Show a loading indicator while data is loading.
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(
-                        child: Text('Error loading posts')); // Handle errors.
+                    return const Center(child: Text('Error loading posts'));
                   } else {
                     List<TweetModel> tweetList = [];
                     for (var i = 0; i < snapshot.data!.docs.length; i++) {
@@ -86,27 +83,12 @@ class _TweetsScreenState extends State<TweetsScreen>
                                       ConnectionState.waiting) {
                                     return ShimmerLoading(context);
                                   } else {
-                                    bool likeValue = false;
-                                    if (snapshot.hasData &&
-                                        snapshot.data!.exists) {
-                                      final data = snapshot.data!.data() as Map<
-                                          String,
-                                          dynamic>; // Cast to the expected type
-                                      if (data['like'] != null) {
-                                        likeValue = data['like']
-                                            as bool; // Cast to bool if it's of that type
-                                      }
-                                    }
-                                    // print(likeValue);
-
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: TweetItem(
                                         context: context,
                                         tweet: tweetList[index],
-                                        likeValue:
-                                            likeValue, // Pass the likeValue to the TweetItem
                                       ),
                                     );
                                   }
@@ -137,17 +119,6 @@ class _TweetsScreenState extends State<TweetsScreen>
                                       ConnectionState.waiting) {
                                     return Container();
                                   } else {
-                                    bool likeValue = false;
-                                    if (snapshot.hasData &&
-                                        snapshot.data!.exists) {
-                                      final data = snapshot.data!.data() as Map<
-                                          String,
-                                          dynamic>; // Cast to the expected type
-                                      if (data['like'] != null) {
-                                        likeValue = data['like']
-                                            as bool; // Cast to bool if it's of that type
-                                      }
-                                    }
                                     // print(likeValue);
 
                                     return Padding(
@@ -155,9 +126,8 @@ class _TweetsScreenState extends State<TweetsScreen>
                                           horizontal: 20),
                                       child: TweetItem(
                                         context: context,
-                                        tweet: tweetList[index],
-                                        likeValue:
-                                            likeValue, // Pass the likeValue to the TweetItem
+                                        tweet: tweetList[
+                                            index], // Pass the likeValue to the TweetItem
                                       ),
                                     );
                                   }

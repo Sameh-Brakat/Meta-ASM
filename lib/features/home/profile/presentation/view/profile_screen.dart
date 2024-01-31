@@ -290,12 +290,9 @@ class _ProfileScreenState extends State<ProfileScreen>
               stream: tweets.orderBy('tweetDate', descending: true).snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                      child:
-                          CircularProgressIndicator()); // Show a loading indicator while data is loading.
+                  return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return const Center(
-                      child: Text('Error loading posts')); // Handle errors.
+                  return const Center(child: Text('Error loading posts'));
                 } else {
                   List<TweetModel> tweetList = [];
                   for (var i = 0; i < snapshot.data!.docs.length; i++) {
@@ -326,17 +323,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     ConnectionState.waiting) {
                                   return Container();
                                 } else {
-                                  bool likeValue = false;
-                                  if (snapshot.hasData &&
-                                      snapshot.data!.exists) {
-                                    final data = snapshot.data!.data() as Map<
-                                        String,
-                                        dynamic>; // Cast to the expected type
-                                    if (data['like'] != null) {
-                                      likeValue = data['like']
-                                          as bool; // Cast to bool if it's of that type
-                                    }
-                                  }
                                   // print(likeValue);
 
                                   return Padding(
@@ -345,8 +331,42 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     child: TweetItem(
                                       context: context,
                                       tweet: tweetList[index],
-                                      likeValue:
-                                          likeValue, // Pass the likeValue to the TweetItem
+                                    ),
+                                  );
+                                }
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 15),
+                            width: double.infinity,
+                            height: 1,
+                            color: Colors.grey[300],
+                          ),
+                          itemCount: tweetList.length,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            return FutureBuilder(
+                              future: snapshot.data!.docs[index].reference
+                                  .collection('reacts')
+                                  .doc(uId)
+                                  .get(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Container();
+                                } else {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: TweetItem(
+                                      context: context,
+                                      tweet: tweetList[index],
                                     ),
                                   );
                                 }
@@ -396,59 +416,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     child: TweetItem(
                                       context: context,
                                       tweet: tweetList[index],
-                                      likeValue:
-                                          likeValue, // Pass the likeValue to the TweetItem
-                                    ),
-                                  );
-                                }
-                              },
-                            );
-                          },
-                          separatorBuilder: (context, index) => Container(
-                            margin: const EdgeInsets.symmetric(vertical: 15),
-                            width: double.infinity,
-                            height: 1,
-                            color: Colors.grey[300],
-                          ),
-                          itemCount: tweetList.length,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: ListView.separated(
-                          itemBuilder: (context, index) {
-                            return FutureBuilder(
-                              future: snapshot.data!.docs[index].reference
-                                  .collection('reacts')
-                                  .doc(uId)
-                                  .get(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<DocumentSnapshot> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Container();
-                                } else {
-                                  bool likeValue = false;
-                                  if (snapshot.hasData &&
-                                      snapshot.data!.exists) {
-                                    final data = snapshot.data!.data() as Map<
-                                        String,
-                                        dynamic>; // Cast to the expected type
-                                    if (data['like'] != null) {
-                                      likeValue = data['like']
-                                          as bool; // Cast to bool if it's of that type
-                                    }
-                                  }
-                                  // print(likeValue);
-
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: TweetItem(
-                                      context: context,
-                                      tweet: tweetList[index],
-                                      likeValue:
-                                          likeValue, // Pass the likeValue to the TweetItem
                                     ),
                                   );
                                 }
