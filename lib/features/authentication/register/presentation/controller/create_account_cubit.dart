@@ -11,7 +11,7 @@ class RegisterCubit extends Cubit<RegisterStates> {
   RegisterCubit() : super(InitialRegisterState());
 
   static RegisterCubit get(context) => BlocProvider.of(context);
-
+///////////////////
   Future<UserCredential?> userRegister(
     context, {
     required String name,
